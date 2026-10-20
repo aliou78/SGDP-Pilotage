@@ -1,0 +1,385 @@
+{% extends 'base.html' %}
+{% load static %}
+
+            <strong>🐟 SGDP</strong>
+            <span>Système de Gestion des Débarquements de Pêche</span>
+{% block content %}
+
+<div class="detail-actions print-controls d-flex justify-content-between align-items-center mb-4">
+
+<div>
+    <h2>📋 Détail du débarquement</h2>
+    <p class="text-muted">
+        Fiche complète du débarquement.
+    </p>
+</div>
+
+<div class="d-flex gap-2">
+
+    <button
+        type="button"
+        class="btn btn-primary"
+        onclick="window.print()"
+        aria-label="Imprimer le détail du débarquement"
+    >
+        🖨️ Imprimer la fiche
+    </button>
+
+    <a
+        href="{% url 'debarquement_list' %}"
+        class="btn btn-secondary"
+    >
+        ← Retour
+    </a>
+
+</div>
+
+</div>
+
+<div class="card shadow-sm print-sheet">
+
+<div class="print-header">
+    <div class="print-identity">
+        <img
+            src="{% static 'images/logo .png' %}"
+            alt="Logo SGDP"
+            class="print-logo"
+        >
+        <div>
+            <strong>SGDP</strong>
+            <span>Système de Gestion des Débarquements</span>
+            <span>Direction de la Pêche Continentale</span>
+        </div>
+    </div>
+
+    <div class="print-document-meta">
+        <span>Document administratif</span>
+        <strong>Fiche n° {{ debarquement.pk }}</strong>
+    </div>
+</div>
+
+<div class="print-title">
+    <h1>FICHE DE DÉBARQUEMENT</h1>
+    <p>Enregistrement et suivi d'un débarquement de produits de la pêche</p>
+</div>
+
+<div class="card-header bg-success text-white">
+    <h5 class="mb-0">
+        Fiche du débarquement
+    </h5>
+</div>
+
+<div class="card-body">
+
+    <div class="row g-4">
+
+        <div class="col-md-6">
+            <strong>Date</strong>
+            <p>{{ debarquement.date|date:"d/m/Y" }}</p>
+        </div>
+
+        <div class="col-md-6">
+            <strong>Site</strong>
+            <p>{{ debarquement.site.nom }}</p>
+        </div>
+
+        <div class="col-md-6">
+            <strong>Espèce</strong>
+            <p>{{ debarquement.espece.nom }}</p>
+        </div>
+
+        <div class="col-md-6">
+            <strong>Quantité</strong>
+            <p>{{ debarquement.quantite }} kg</p>
+        </div>
+
+        <div class="col-md-6">
+            <strong>Agent</strong>
+            <p>
+                {% if debarquement.agent %}
+                    {{ debarquement.agent.get_full_name|default:debarquement.agent.username }}
+                {% else %}
+                    —
+                {% endif %}
+            </p>
+        </div>
+
+        <div class="col-md-6">
+            <strong>Statut</strong>
+            <p>
+                {% if debarquement.statut == 'valide' %}
+                    <span class="badge bg-success">
+                        Validé
+                    </span>
+                {% else %}
+                    <span class="badge bg-warning text-dark">
+                        En attente
+                    </span>
+                {% endif %}
+            </p>
+        </div>
+
+        <div class="col-md-6">
+            <strong>Validé par</strong>
+            <p>
+                {% if debarquement.valide_par %}
+                    {{ debarquement.valide_par.get_full_name|default:debarquement.valide_par.username }}
+                {% else %}
+                    —
+                {% endif %}
+            </p>
+        </div>
+
+        <div class="col-md-6">
+            <strong>Date de validation</strong>
+            <p>
+                {% if debarquement.valide_le %}
+                    {{ debarquement.valide_le|date:"d/m/Y H:i" }}
+                {% else %}
+                    —
+                {% endif %}
+            </p>
+        </div>
+
+        <div class="col-12">
+            <strong>Observation</strong>
+
+            <div class="border rounded p-3 mt-2">
+                {% if debarquement.observation %}
+                    {{ debarquement.observation }}
+                {% else %}
+                    <span class="text-muted">
+                        Aucune observation.
+                    </span>
+                {% endif %}
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<div class="print-signatures">
+    <div class="signature-box">
+        <strong>Signature de l'agent</strong>
+        <span>Nom et signature</span>
+    </div>
+    <div class="signature-box">
+        <strong>Signature du responsable</strong>
+        <span>Nom, qualité et signature</span>
+    </div>
+</div>
+
+</div>
+
+<style>
+
+@media print {
+
+    @page {
+        size: A4 portrait;
+        margin: 15mm;
+    }
+
+    nav,
+    footer,
+    .btn,
+    .detail-actions,
+    .print-controls {
+        display: none !important;
+    }
+
+    body {
+        background: white !important;
+    }
+
+    main.container {
+        margin: 0 !important;
+        max-width: none !important;
+    }
+
+    .card {
+        box-shadow: none !important;
+        border: 0 !important;
+    }
+
+    .print-sheet {
+        color: #1f2933;
+        font-family: Arial, sans-serif;
+    }
+
+    .print-header {
+        align-items: center;
+        border-bottom: 2px solid #087f5b;
+        display: flex;
+        justify-content: space-between;
+        padding-bottom: 12px;
+    }
+
+    .print-identity {
+        align-items: center;
+        display: flex;
+        gap: 12px;
+    }
+
+    .print-logo {
+        height: 58px;
+        object-fit: contain;
+        width: 58px;
+    }
+
+    .print-identity strong,
+    .print-identity span {
+        display: block;
+    }
+
+    .print-identity strong {
+        color: #075b45;
+        font-size: 21px;
+        letter-spacing: .08em;
+    }
+
+    .print-identity span,
+    .print-document-meta {
+        font-size: 10px;
+    }
+
+    .print-document-meta {
+        text-align: right;
+    }
+
+    .print-document-meta span,
+    .print-document-meta strong {
+        display: block;
+    }
+
+    .print-document-meta span {
+        color: #64748b;
+        margin-bottom: 4px;
+    }
+
+    .print-title {
+        border-bottom: 1px solid #cbd5e1;
+        display: block;
+        margin: 24px 0 20px;
+        padding-bottom: 12px;
+        text-align: center;
+    }
+
+    .print-title h1 {
+        color: #173b3f;
+        font-size: 22px;
+        letter-spacing: .08em;
+        margin: 0;
+    }
+
+    .print-title p {
+        color: #64748b;
+        font-size: 10px;
+        margin: 6px 0 0;
+    }
+
+    .card-body {
+        padding: 0 !important;
+    }
+
+    .card-header {
+        display: none !important;
+    }
+
+    .card-body .row {
+        border: 1px solid #cbd5e1;
+        margin: 0;
+    }
+
+    .card-body .row > div {
+        border-bottom: 1px solid #cbd5e1;
+        border-right: 1px solid #cbd5e1;
+        padding: 12px 14px;
+    }
+
+    .card-body .row > div:nth-child(even) {
+        border-right: 0;
+    }
+
+    .card-body .row > div:nth-last-child(2) {
+        border-bottom: 0;
+    }
+
+    .card-body .row > div:last-child {
+        border: 0;
+    }
+
+    .card-body strong {
+        color: #075b45;
+        display: block;
+        font-size: 10px;
+        letter-spacing: .06em;
+        margin-bottom: 5px;
+        text-transform: uppercase;
+    }
+
+    .card-body p {
+        margin: 0;
+    }
+
+    .card-body .border {
+        border-color: #cbd5e1 !important;
+        border-radius: 0 !important;
+        min-height: 64px;
+    }
+
+    .print-signatures {
+        display: flex;
+        gap: 40px;
+        margin-top: 54px;
+    }
+
+    .signature-box {
+        border-top: 1px solid #334155;
+        flex: 1;
+        min-height: 72px;
+        padding-top: 8px;
+        text-align: center;
+    }
+
+    .signature-box strong,
+    .signature-box span {
+        display: block;
+    }
+
+    .signature-box strong {
+        font-size: 11px;
+    }
+
+    .signature-box span {
+        color: #64748b;
+        font-size: 10px;
+        margin-top: 5px;
+    }
+
+}
+
+.print-header,
+.print-title,
+.print-signatures {
+    display: none;
+}
+
+@media print {
+    .print-header {
+        display: flex !important;
+    }
+
+    .print-title {
+        display: block !important;
+    }
+
+    .print-signatures {
+        display: flex !important;
+    }
+}
+
+</style>
+
+{% endblock %}

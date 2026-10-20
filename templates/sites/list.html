@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2>Gestion des sites</h2>
+        <p class="text-muted mb-0">Liste des sites de débarquement</p>
+    </div>
+    {% if user.role == 'admin' or user.role == 'chef' %}
+        <a href="{% url 'site_create' %}" class="btn btn-primary">+ Ajouter un site</a>
+    {% endif %}
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>Nom</th>
+                        <th>Commune</th>
+                        <th>Région</th>
+                        <th>Statut</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for site in sites %}
+                    <tr>
+                        <td><strong>{{ site.nom }}</strong></td>
+                        <td>{{ site.commune }}</td>
+                        <td>{{ site.region }}</td>
+                        <td>
+                            {% if site.actif %}
+                                <span class="badge bg-success">Actif</span>
+                            {% else %}
+                                <span class="badge bg-secondary">Inactif</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if user.role == 'admin' or user.role == 'chef' %}
+                                <a href="{% url 'site_update' site.pk %}" class="btn btn-sm btn-warning">Modifier</a>
+                                <form method="post"
+                                      action="{% url 'site_toggle_active' site.pk %}"
+                                      class="d-inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm {% if site.actif %}btn-danger{% else %}btn-success{% endif %}">
+                                        {% if site.actif %}Désactiver{% else %}Activer{% endif %}
+                                    </button>
+                                </form>
+                            {% else %}
+                                <span class="text-muted">Consultation</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center py-4">Aucun site enregistré.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

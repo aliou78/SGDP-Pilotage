@@ -1,0 +1,229 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Connexion - SGDP{% endblock %}
+
+{% block content %}
+
+<style>
+    .login-page {
+        min-height: 76vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem 0;
+    }
+
+    .login-card {
+        width: 100%;
+        max-width: 980px;
+        overflow: hidden;
+        border: none;
+        border-radius: 24px;
+        background: #ffffff;
+        box-shadow: 0 24px 60px rgba(7, 95, 82, 0.14);
+    }
+
+    .login-panel {
+        min-height: 560px;
+    }
+
+    .login-illustration {
+        background: linear-gradient(135deg, #0b3d37 0%, #0f6a5b 46%, #7cc7b7 100%);
+        position: relative;
+        color: white;
+        padding: 2.5rem;
+    }
+
+    .login-illustration::before,
+    .login-illustration::after {
+        content: "";
+        position: absolute;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.08);
+    }
+
+    .login-illustration::before {
+        width: 220px;
+        height: 220px;
+        right: -70px;
+        top: -40px;
+    }
+
+    .login-illustration::after {
+        width: 180px;
+        height: 180px;
+        left: -50px;
+        bottom: -50px;
+    }
+
+    .brand-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.75rem;
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        border-radius: 999px;
+        padding: 0.5rem 0.9rem;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+    }
+
+    .brand-badge img {
+        width: 2.5rem;
+        height: 2.5rem;
+        border-radius: 50%;
+        object-fit: cover;
+        background: #ffffff;
+    }
+
+    .login-form-side {
+        padding: 2.5rem 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(180deg, #ffffff 0%, #f7faf8 100%);
+    }
+
+    .login-box {
+        width: 100%;
+        max-width: 360px;
+    }
+
+    .login-title {
+        font-weight: 700;
+        color: #133e3d;
+        margin-bottom: 0.5rem;
+    }
+
+    .login-subtitle {
+        color: #6b7d7a;
+        font-size: 0.96rem;
+        margin-bottom: 1.8rem;
+    }
+
+    .login-form .form-label {
+        font-weight: 600;
+        color: #234744;
+    }
+
+    .login-form .form-control {
+        border-radius: 12px;
+        border: 1px solid #dfe9e6;
+        padding: 0.8rem 0.9rem;
+        background: #ffffff;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .login-form .form-control:focus {
+        border-color: #2d9c8a;
+        box-shadow: 0 0 0 0.2rem rgba(45, 156, 138, 0.12);
+    }
+
+    .login-btn {
+        width: 100%;
+        border: none;
+        border-radius: 12px;
+        padding: 0.9rem 1rem;
+        background: linear-gradient(135deg, #0f6a5b 0%, #2fa182 100%);
+        color: white;
+        font-weight: 700;
+        box-shadow: 0 12px 25px rgba(15, 106, 91, 0.22);
+    }
+
+    .login-btn:hover {
+        background: linear-gradient(135deg, #0d5d50 0%, #278f75 100%);
+        color: white;
+    }
+
+    .alert-login {
+        border-radius: 12px;
+        font-size: 0.92rem;
+        padding: 0.8rem 1rem;
+        margin-top: 0.9rem;
+    }
+
+    @media (max-width: 767.98px) {
+        .login-panel {
+            min-height: auto;
+        }
+
+        .login-illustration {
+            padding: 1.75rem 1.5rem 1.25rem;
+        }
+
+        .login-form-side {
+            padding: 1.5rem 1.1rem 2rem;
+        }
+    }
+</style>
+
+<div class="login-page">
+    <div class="card login-card">
+        <div class="row g-0 login-panel">
+            <div class="col-md-5 login-illustration d-flex flex-column justify-content-between position-relative">
+                <div class="brand-badge">
+                    <img src="{% static 'images/logo .png' %}" alt="Logo de la Direction de la Pêche Continentale">
+                    <span>SGDP</span>
+                </div>
+
+                <div>
+                    <p class="mb-2 text-uppercase text-white-50" style="letter-spacing: 0.12em; font-size: 0.76rem;">
+                        Système de gestion
+                    </p>
+                    <h2 class="mb-3 fw-bold">Débarquements de pêche</h2>
+                    <p class="mb-0 text-white-50" style="line-height: 1.7;">
+                        Suivi, analyse et gestion intelligente des données de production.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-md-7 login-form-side">
+                <div class="login-box">
+                    <h3 class="login-title">Connexion</h3>
+                    <p class="login-subtitle">Accédez à votre espace de gestion</p>
+
+                    <form method="post" class="login-form">
+                        {% csrf_token %}
+
+                        <div class="mb-3">
+                            <label class="form-label" for="username">Nom d'utilisateur</label>
+                            <input
+                                id="username"
+                                type="text"
+                                name="username"
+                                class="form-control"
+                                placeholder="Entrez votre nom d'utilisateur"
+                                required
+                            >
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label" for="password">Mot de passe</label>
+                            <input
+                                id="password"
+                                type="password"
+                                name="password"
+                                class="form-control"
+                                placeholder="Entrez votre mot de passe"
+                                required
+                            >
+                        </div>
+
+                        {% if form.errors %}
+                            <div class="alert alert-danger alert-login">
+                                Nom d'utilisateur ou mot de passe incorrect.
+                            </div>
+                        {% endif %}
+
+                        <button type="submit" class="btn login-btn mt-3">
+                            Se connecter
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

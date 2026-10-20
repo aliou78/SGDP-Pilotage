@@ -1,0 +1,1129 @@
+{% extends 'base.html' %}
+
+{% block title %}Rapports | SGDP{% endblock %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2>📊 Rapports des débarquements</h2>
+        <p class="text-muted mb-0">
+            Consultez les rapports journaliers, mensuels et annuels.
+        </p>
+    </div>
+</div>
+
+
+<!-- ============================= -->
+<!-- FILTRES -->
+<!-- ============================= -->
+
+<div class="report-controls card shadow-sm mb-4">
+    <div class="card-body">
+
+        <h5 class="mb-3">🔎 Type de rapport</h5>
+
+        <form method="get" class="row g-3 align-items-end">
+
+            <!-- TYPE DE RAPPORT -->
+            <div class="col-md-3">
+
+                <label for="type_rapport" class="form-label">
+                    Type de rapport
+                </label>
+
+                <select
+                    id="type_rapport"
+                    name="type_rapport"
+                    class="form-select"
+                    onchange="changerTypeRapport()"
+                >
+
+                    <option
+                        value="journalier"
+                        {% if type_rapport == 'journalier' %}selected{% endif %}
+                    >
+                        Journalier
+                    </option>
+
+                    <option
+                        value="mensuel"
+                        {% if type_rapport == 'mensuel' %}selected{% endif %}
+                    >
+                        Mensuel
+                    </option>
+
+                    <option
+                        value="annuel"
+                        {% if type_rapport == 'annuel' %}selected{% endif %}
+                    >
+                        Annuel
+                    </option>
+
+                    <option
+                        value="personnalise"
+                        {% if type_rapport == 'personnalise' %}selected{% endif %}
+                    >
+                        Période personnalisée
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <!-- ============================= -->
+            <!-- JOURNALIER -->
+            <!-- ============================= -->
+
+            <div
+                class="col-md-3"
+                id="champ_journalier"
+                {% if type_rapport != 'journalier' %}style="display:none;"{% endif %}
+            >
+
+                <label for="date_rapport" class="form-label">
+                    Date
+                </label>
+
+                <input
+                    type="date"
+                    id="date_rapport"
+                    name="date_rapport"
+                    value="{{ date_rapport }}"
+                    class="form-control"
+                >
+
+            </div>
+
+
+            <!-- ============================= -->
+            <!-- MOIS -->
+            <!-- ============================= -->
+
+            <div
+                class="col-md-2"
+                id="champ_mois"
+                {% if type_rapport != 'mensuel' %}style="display:none;"{% endif %}
+            >
+
+                <label for="mois" class="form-label">
+                    Mois
+                </label>
+
+                <select
+                    id="mois"
+                    name="mois"
+                    class="form-select"
+                >
+
+                    <option value="">
+                        Choisir
+                    </option>
+
+                    <option value="1" {% if mois == '1' %}selected{% endif %}>
+                        Janvier
+                    </option>
+
+                    <option value="2" {% if mois == '2' %}selected{% endif %}>
+                        Février
+                    </option>
+
+                    <option value="3" {% if mois == '3' %}selected{% endif %}>
+                        Mars
+                    </option>
+
+                    <option value="4" {% if mois == '4' %}selected{% endif %}>
+                        Avril
+                    </option>
+
+                    <option value="5" {% if mois == '5' %}selected{% endif %}>
+                        Mai
+                    </option>
+
+                    <option value="6" {% if mois == '6' %}selected{% endif %}>
+                        Juin
+                    </option>
+
+                    <option value="7" {% if mois == '7' %}selected{% endif %}>
+                        Juillet
+                    </option>
+
+                    <option value="8" {% if mois == '8' %}selected{% endif %}>
+                        Août
+                    </option>
+
+                    <option value="9" {% if mois == '9' %}selected{% endif %}>
+                        Septembre
+                    </option>
+
+                    <option value="10" {% if mois == '10' %}selected{% endif %}>
+                        Octobre
+                    </option>
+
+                    <option value="11" {% if mois == '11' %}selected{% endif %}>
+                        Novembre
+                    </option>
+
+                    <option value="12" {% if mois == '12' %}selected{% endif %}>
+                        Décembre
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <!-- ============================= -->
+            <!-- ANNÉE -->
+            <!-- ============================= -->
+
+            <div
+                class="col-md-2"
+                id="champ_annee"
+                {% if type_rapport != 'mensuel' and type_rapport != 'annuel' %}
+                    style="display:none;"
+                {% endif %}
+            >
+
+                <label for="annee" class="form-label">
+                    Année
+                </label>
+
+                <input
+                    type="number"
+                    id="annee"
+                    name="annee"
+                    value="{{ annee }}"
+                    class="form-control"
+                    min="2000"
+                    max="2100"
+                    placeholder="2026"
+                >
+
+            </div>
+
+
+            <!-- ============================= -->
+            <!-- DATE DÉBUT -->
+            <!-- ============================= -->
+
+            <div
+                class="col-md-3"
+                id="champ_date_debut"
+                {% if type_rapport != 'personnalise' %}style="display:none;"{% endif %}
+            >
+
+                <label for="date_debut" class="form-label">
+                    Date début
+                </label>
+
+                <input
+                    type="date"
+                    id="date_debut"
+                    name="date_debut"
+                    value="{{ date_debut }}"
+                    class="form-control"
+                >
+
+            </div>
+
+
+            <!-- ============================= -->
+            <!-- DATE FIN -->
+            <!-- ============================= -->
+
+            <div
+                class="col-md-3"
+                id="champ_date_fin"
+                {% if type_rapport != 'personnalise' %}style="display:none;"{% endif %}
+            >
+
+                <label for="date_fin" class="form-label">
+                    Date fin
+                </label>
+
+                <input
+                    type="date"
+                    id="date_fin"
+                    name="date_fin"
+                    value="{{ date_fin }}"
+                    class="form-control"
+                >
+
+            </div>
+
+
+            <!-- ============================= -->
+            <!-- SITE -->
+            <!-- ============================= -->
+
+            <div class="col-md-3">
+
+                <label for="site" class="form-label">
+                    Site
+                </label>
+
+                <select
+                    id="site"
+                    name="site"
+                    class="form-select"
+                >
+
+                    <option value="">
+                        Tous les sites
+                    </option>
+
+                    {% for site in sites %}
+
+                        <option
+                            value="{{ site.pk }}"
+                            {% if site_id == site.pk|stringformat:'s' %}selected{% endif %}
+                        >
+                            {{ site.nom }}
+                        </option>
+
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+
+            <!-- ============================= -->
+            <!-- ESPECE -->
+            <!-- ============================= -->
+
+            <div class="col-md-3">
+
+                <label for="espece" class="form-label">
+                    Espèce
+                </label>
+
+                <select
+                    id="espece"
+                    name="espece"
+                    class="form-select"
+                >
+
+                    <option value="">
+                        Toutes les espèces
+                    </option>
+
+                    {% for espece in especes %}
+
+                        <option
+                            value="{{ espece.pk }}"
+                            {% if espece_id == espece.pk|stringformat:'s' %}selected{% endif %}
+                        >
+                            {{ espece.nom }}
+                        </option>
+
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+
+            <!-- ============================= -->
+            <!-- BOUTONS -->
+            <!-- ============================= -->
+
+            <div class="col-md-6 d-flex gap-2">
+
+                <button
+                    type="submit"
+                    class="btn btn-primary"
+                >
+                    🔎 Filtrer
+                </button>
+
+
+                <button
+                    type="submit"
+                    formaction="{% url 'rapport_excel' %}"
+                    class="btn btn-success"
+                >
+                    📊 Excel
+                </button>
+
+
+                <button
+                    type="submit"
+                    formaction="{% url 'rapport_pdf' %}"
+                    class="btn btn-danger"
+                >
+                    📄 PDF
+                </button>
+
+                <button
+                    type="button"
+                    class="report-print-control btn btn-outline-dark"
+                    onclick="window.print()"
+                    aria-label="Imprimer le rapport"
+                >
+                    🖨️ Imprimer le rapport
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+</div>
+
+
+<!-- ============================= -->
+<!-- RÉSUMÉ -->
+<!-- ============================= -->
+
+<div class="alert alert-info shadow-sm">
+
+    <strong>📅 Rapport sélectionné :</strong>
+
+    {% if type_rapport == 'journalier' %}
+
+        Journalier
+
+        {% if date_rapport %}
+            — {{ date_rapport }}
+        {% endif %}
+
+
+    {% elif type_rapport == 'mensuel' %}
+
+        Mensuel
+
+        {% if mois and annee %}
+            — {{ mois }}/{{ annee }}
+        {% endif %}
+
+
+    {% elif type_rapport == 'annuel' %}
+
+        Annuel
+
+        {% if annee %}
+            — {{ annee }}
+        {% endif %}
+
+
+    {% else %}
+
+        Période personnalisée
+
+        {% if date_debut or date_fin %}
+            — {{ date_debut|default:"Toutes" }}
+            au
+            {{ date_fin|default:"Toutes" }}
+        {% endif %}
+
+    {% endif %}
+
+    {% if site_selectionne %}
+        — Site : {{ site_selectionne }}
+    {% endif %}
+
+    {% if espece_selectionnee %}
+        — Espèce : {{ espece_selectionnee }}
+    {% endif %}
+
+</div>
+
+
+<!-- ============================= -->
+<!-- STATISTIQUES -->
+<!-- ============================= -->
+
+<div class="card shadow-sm mb-4">
+
+    <div class="card-body">
+
+        <h5 class="mb-3">
+            📋 Quantités par site et par espèce
+        </h5>
+
+        <div class="table-responsive">
+
+            <table class="table table-hover align-middle mb-0">
+
+                <thead>
+
+                    <tr>
+                        <th>Site</th>
+                        <th>Espèce</th>
+                        <th>Quantité totale (kg)</th>
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {% for ligne in statistiques %}
+
+                        <tr>
+
+                            <td>
+                                {{ ligne.site__nom }}
+                            </td>
+
+                            <td>
+                                {{ ligne.espece__nom }}
+                            </td>
+
+                            <td>
+
+                                <strong>
+                                    {{ ligne.total }}
+                                </strong>
+
+                                kg
+
+                            </td>
+
+                        </tr>
+
+
+                    {% empty %}
+
+                        <tr>
+
+                            <td
+                                colspan="3"
+                                class="text-center py-4 text-muted"
+                            >
+                                Aucun débarquement trouvé pour cette période.
+                            </td>
+
+                        </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ============================= -->
+<!-- QUANTITÉ PAR ESPÈCE + TOTAL -->
+<!-- ============================= -->
+
+<div class="row g-4">
+
+    <div class="col-md-8">
+
+        <div class="card shadow-sm h-100">
+
+            <div class="card-body">
+
+                <h5 class="mb-3">
+                    🐟 Quantité par espèce
+                </h5>
+
+                <div class="table-responsive">
+
+                    <table class="table table-hover mb-0">
+
+                        <thead>
+
+                            <tr>
+                                <th>Espèce</th>
+                                <th>Quantité</th>
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            {% for ligne in quantites_par_espece %}
+
+                                <tr>
+
+                                    <td>
+                                        {{ ligne.espece__nom }}
+                                    </td>
+
+                                    <td>
+
+                                        <strong>
+                                            {{ ligne.total }}
+                                        </strong>
+
+                                        kg
+
+                                    </td>
+
+                                </tr>
+
+
+                            {% empty %}
+
+                                <tr>
+
+                                    <td
+                                        colspan="2"
+                                        class="text-center text-muted"
+                                    >
+                                        Aucune donnée disponible.
+                                    </td>
+
+                                </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ============================= -->
+    <!-- TOTAL -->
+    <!-- ============================= -->
+
+    <div class="col-md-4">
+
+        <div class="card shadow-sm h-100">
+
+            <div class="card-body">
+
+                <h5 class="mb-3">
+                    🧮 Total général
+                </h5>
+
+                <p class="display-6 mb-0 text-success">
+
+                    {{ total_general }} kg
+
+                </p>
+
+                <small class="text-muted">
+
+                    Quantité totale pour la période sélectionnée.
+
+                </small>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ============================= -->
+<!-- ANALYSE GRAPHIQUE -->
+<!-- ============================= -->
+<div class="card shadow-sm mt-4 mb-4">
+    <div class="card-body">
+
+        <h5 class="mb-3">📈 Évolution des débarquements</h5>
+
+        {% if evolution %}
+
+        <div style="height: 350px;">
+            <canvas id="graphiqueEvolution"></canvas>
+        </div>
+
+        {% else %}
+
+        <p class="text-muted text-center">
+            Aucune donnée disponible pour afficher l'analyse.
+        </p>
+
+        {% endif %}
+
+    </div>
+</div>
+
+<!-- ============================= -->
+<!-- GRAPHIQUE PAR ESPÈCE -->
+<!-- ============================= -->
+
+<div class="card shadow-sm mt-4 mb-4">
+
+    <div class="card-body">
+
+        <h5 class="mb-3">
+            🐟 Quantité totale par espèce
+        </h5>
+
+        {% if graphique_especes %}
+
+            <div style="height: 350px;">
+
+                <canvas id="graphiqueEspeces"></canvas>
+
+            </div>
+
+        {% else %}
+
+            <p class="text-muted text-center">
+
+                Aucune donnée disponible.
+
+            </p>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+
+<!-- ============================= -->
+<!-- CHART.JS -->
+<!-- ============================= -->
+
+<style>
+    @page {
+        size: A4 landscape;
+        margin: 12mm;
+    }
+
+    @media print {
+        nav,
+        footer,
+        .report-controls,
+        .report-print-control {
+            display: none !important;
+        }
+
+        body {
+            background: white !important;
+            color: #000 !important;
+        }
+
+        main.container {
+            margin: 0 !important;
+            max-width: none !important;
+            width: 100% !important;
+        }
+
+        .card,
+        .alert {
+            box-shadow: none !important;
+            break-inside: avoid;
+        }
+
+        .card {
+            border: 1px solid #dee2e6 !important;
+        }
+
+        h2 {
+            margin-top: 0 !important;
+        }
+    }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+<script>
+
+    /*
+    =====================================
+    CHANGEMENT DU TYPE DE RAPPORT
+    =====================================
+    */
+
+    function changerTypeRapport() {
+
+        const type =
+            document.getElementById(
+                "type_rapport"
+            ).value;
+
+
+        const journalier =
+            document.getElementById(
+                "champ_journalier"
+            );
+
+
+        const mois =
+            document.getElementById(
+                "champ_mois"
+            );
+
+
+        const annee =
+            document.getElementById(
+                "champ_annee"
+            );
+
+
+        const dateDebut =
+            document.getElementById(
+                "champ_date_debut"
+            );
+
+
+        const dateFin =
+            document.getElementById(
+                "champ_date_fin"
+            );
+
+
+        // Tout cacher
+
+        journalier.style.display = "none";
+
+        mois.style.display = "none";
+
+        annee.style.display = "none";
+
+        dateDebut.style.display = "none";
+
+        dateFin.style.display = "none";
+
+
+        // Journalier
+
+        if (type === "journalier") {
+
+            journalier.style.display = "block";
+
+        }
+
+
+        // Mensuel
+
+        if (type === "mensuel") {
+
+            mois.style.display = "block";
+
+            annee.style.display = "block";
+
+        }
+
+
+        // Annuel
+
+        if (type === "annuel") {
+
+            annee.style.display = "block";
+
+        }
+
+
+        // Personnalisé
+
+        if (type === "personnalise") {
+
+            dateDebut.style.display = "block";
+
+            dateFin.style.display = "block";
+
+        }
+
+    }
+
+
+    /*
+    =====================================
+    GRAPHIQUE D'ÉVOLUTION
+    =====================================
+    */
+
+    const labelsEvolution = [
+
+        {% for ligne in evolution %}
+
+            "{{ ligne.label|escapejs }}",
+
+        {% endfor %}
+
+    ];
+
+
+    const donneesEvolution = [
+
+        {% for ligne in evolution %}
+
+            {{ ligne.total|default:0 }},
+
+        {% endfor %}
+
+    ];
+
+    const couleursGraphiques = [
+        '#087f8c',
+        '#51c4bd',
+        '#c8df78',
+        '#247ba0',
+        '#3a9d7c',
+        '#e0a458',
+        '#16697a'
+    ];
+
+    const couleursEvolution = donneesEvolution.map(
+        (_, index) => couleursGraphiques[index % couleursGraphiques.length]
+    );
+
+
+    if (labelsEvolution.length > 0) {
+
+        const graphiqueEvolution =
+            document.getElementById(
+                'graphiqueEvolution'
+            );
+
+
+        new Chart(
+
+            graphiqueEvolution,
+
+            {
+
+                type: 'line',
+
+
+                data: {
+
+                    labels: labelsEvolution,
+
+
+                    datasets: [
+
+                        {
+
+                            label: 'Quantité (kg)',
+                            data: donneesEvolution,
+                            backgroundColor: 'rgba(8, 127, 140, 0.16)',
+                            borderColor: '#087f8c',
+                            borderWidth: 2,
+                            pointBackgroundColor: '#087f8c',
+                            pointRadius: 4,
+                            tension: 0.25,
+                            fill: true
+
+                        }
+
+                    ]
+
+                },
+
+
+                options: {
+
+                    responsive: true,
+
+                    maintainAspectRatio: false,
+
+
+                    plugins: {
+
+                        legend: {
+
+                            display: true
+
+                        }
+
+                    },
+
+
+                    scales: {
+
+                        y: {
+
+                            beginAtZero: true,
+
+
+                            title: {
+
+                                display: true,
+
+                                text: 'Quantité (kg)'
+
+                            }
+
+                        },
+
+
+                        x: {
+
+                            title: {
+
+                                display: true,
+
+                                {% if type_rapport == 'annuel' %}
+
+                                    text: 'Mois'
+
+                                {% elif type_rapport == 'mensuel' %}
+
+                                    text: 'Jours du mois'
+
+                                {% else %}
+
+                                    text: 'Dates'
+
+                                {% endif %}
+
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        );
+
+    }
+
+
+    /*
+    =====================================
+    GRAPHIQUE PAR ESPÈCE
+    =====================================
+    */
+
+    const nomsEspeces = [
+
+        {% for ligne in graphique_especes %}
+
+            "{{ ligne.espece__nom|escapejs }}",
+
+        {% endfor %}
+
+    ];
+
+
+    const quantitesEspeces = [
+
+        {% for ligne in graphique_especes %}
+
+            {{ ligne.total|default:0 }},
+
+        {% endfor %}
+
+    ];
+
+    const couleursEspeces = quantitesEspeces.map(
+        (_, index) => couleursGraphiques[index % couleursGraphiques.length]
+    );
+
+
+    if (nomsEspeces.length > 0) {
+
+        const graphiqueEspeces =
+            document.getElementById(
+                'graphiqueEspeces'
+            );
+
+
+        new Chart(
+
+            graphiqueEspeces,
+
+            {
+
+                type: 'bar',
+
+
+                data: {
+
+                    labels: nomsEspeces,
+
+
+                    datasets: [
+
+                        {
+
+                            label: 'Quantité (kg)',
+                            data: quantitesEspeces,
+                            backgroundColor: couleursEspeces,
+                            borderColor: '#062b3b',
+                            borderWidth: 1,
+                            borderRadius: 4
+
+                        }
+
+                    ]
+
+                },
+
+
+                options: {
+
+                    responsive: true,
+
+                    maintainAspectRatio: false,
+
+
+                    plugins: {
+
+                        legend: {
+
+                            display: true
+
+                        }
+
+                    },
+
+
+                    scales: {
+
+                        y: {
+
+                            beginAtZero: true,
+
+
+                            title: {
+
+                                display: true,
+
+                                text: 'Quantité (kg)'
+
+                            }
+
+                        },
+
+
+                        x: {
+
+                            title: {
+
+                                display: true,
+
+                                text: 'Espèces'
+
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        );
+
+    }
+
+</script>
+
+
+{% endblock %}

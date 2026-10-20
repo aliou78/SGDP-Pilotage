@@ -1,0 +1,473 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<style>
+    @media print {
+        nav,
+        footer,
+        .debarquements-header,
+        .debarquements-filters,
+        .debarquements-actions,
+        .no-print {
+            display: none !important;
+        }
+
+        .debarquements-print-header {
+            align-items: center;
+            display: flex !important;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        main.container {
+            margin: 0 !important;
+            max-width: none !important;
+            width: 100% !important;
+        }
+
+        .card {
+            border: 0 !important;
+            box-shadow: none !important;
+        }
+
+        .table-responsive {
+            overflow: visible !important;
+        }
+    }
+</style>
+
+
+<!-- En-tête pour impression -->
+<div class="debarquements-print-header" style="display: none;">
+
+    <img
+        src="{% static 'images/logo .png' %}"
+        alt="Logo SGDP"
+        width="64"
+        height="64"
+    >
+
+    <div>
+        <h2 class="mb-1">SGDP</h2>
+        <p class="mb-0">
+            Liste des débarquements
+        </p>
+    </div>
+
+</div>
+
+
+<!-- En-tête -->
+<div class="debarquements-header d-flex justify-content-between align-items-center mb-4">
+
+    <div>
+        <h2>Gestion des débarquements</h2>
+
+        <p class="text-muted mb-0">
+            Enregistrements des débarquements de poissons
+        </p>
+    </div>
+
+    <div class="d-flex gap-2">
+
+        {% if user.role == 'admin' or user.role == 'chef' %}
+
+            <a
+                href="{% url 'debarquement_archive_list' %}"
+                class="btn btn-outline-secondary"
+            >
+                Archives
+            </a>
+
+        {% endif %}
+
+        {% if user.role == 'admin' or user.role == 'chef' or user.role == 'agent' %}
+
+            <a
+                href="{% url 'debarquement_create' %}"
+                class="btn btn-primary"
+            >
+                + Nouveau débarquement
+            </a>
+
+        {% endif %}
+
+        <button
+            type="button"
+            class="btn btn-outline-dark"
+            onclick="window.print()"
+            title="Imprimer la liste des débarquements"
+            aria-label="Imprimer la liste des débarquements"
+        >
+            🖨️ Imprimer
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- Carte principale -->
+<div class="card shadow-sm">
+
+    <div class="card-body">
+
+
+        <!-- Filtres -->
+        <form method="get" class="debarquements-filters mb-4">
+
+            <div class="row g-2">
+
+                <!-- Recherche -->
+                <div class="col-md-4">
+
+                    <input
+                        type="text"
+                        name="recherche"
+                        value="{{ recherche }}"
+                        class="form-control"
+                        placeholder="Rechercher un site ou une espèce..."
+                    >
+
+                </div>
+
+
+                <!-- Date -->
+                <div class="col-md-2">
+
+                    <input
+                        type="date"
+                        name="date"
+                        value="{{ date }}"
+                        class="form-control"
+                    >
+
+                </div>
+
+
+                <!-- Site -->
+                <div class="col-md-2">
+
+                    <select
+                        name="site"
+                        class="form-select"
+                    >
+
+                        <option value="">
+                            Tous les sites
+                        </option>
+
+                        {% for site in sites %}
+
+                            <option
+                                value="{{ site.id }}"
+                                {% if site_id|stringformat:"s" == site.id|stringformat:"s" %}
+                                    selected
+                                {% endif %}
+                            >
+                                {{ site.nom }}
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+                <!-- Espèce -->
+                <div class="col-md-2">
+
+                    <select
+                        name="espece"
+                        class="form-select"
+                    >
+
+                        <option value="">
+                            Toutes les espèces
+                        </option>
+
+                        {% for espece in especes %}
+
+                            <option
+                                value="{{ espece.id }}"
+                                {% if espece_id|stringformat:"s" == espece.id|stringformat:"s" %}
+                                    selected
+                                {% endif %}
+                            >
+                                {{ espece.nom }}
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+                <!-- Boutons -->
+                <div class="col-md-2 d-flex gap-2">
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary flex-grow-1"
+                    >
+                        Filtrer
+                    </button>
+
+                    <a
+                        href="{% url 'debarquement_list' %}"
+                        class="btn btn-outline-secondary"
+                        title="Réinitialiser"
+                    >
+                        ↻
+                    </a>
+
+                </div>
+
+            </div>
+
+        </form>
+
+
+        <!-- Tableau -->
+        <div class="table-responsive">
+
+            <table class="table table-hover align-middle">
+
+                <thead>
+
+                    <tr>
+
+                        <th>Date</th>
+
+                        <th>Site</th>
+
+                        <th>Espèce</th>
+
+                        <th>Quantité (kg)</th>
+
+                        <th>Agent</th>
+
+                        <th>Statut</th>
+
+                        <th>Observation</th>
+
+                        <th class="debarquements-actions">
+                            Actions
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                {% for debarquement in debarquements %}
+
+                    <tr>
+
+                        <!-- Date -->
+                        <td>
+                            {{ debarquement.date|date:"d/m/Y" }}
+                        </td>
+
+
+                        <!-- Site -->
+                        <td>
+                            {{ debarquement.site.nom }}
+                        </td>
+
+
+                        <!-- Espèce -->
+                        <td>
+                            <strong>
+                                {{ debarquement.espece.nom }}
+                            </strong>
+                        </td>
+
+
+                        <!-- Quantité -->
+                        <td>
+
+                            <strong>
+                                {{ debarquement.quantite }}
+                            </strong>
+
+                        </td>
+
+
+                        <!-- Agent -->
+                        <td>
+
+                            {% if debarquement.agent %}
+
+                                {{ debarquement.agent.get_full_name|default:debarquement.agent.username }}
+
+                            {% else %}
+
+                                <span class="text-muted">
+                                    -
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <!-- Statut -->
+                        <td>
+
+                            {% if debarquement.statut == 'valide' %}
+
+                                <span class="badge bg-success">
+                                    Validé
+                                </span>
+
+                            {% else %}
+
+                                <span class="badge bg-warning text-dark">
+                                    En attente
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <!-- Observation -->
+                        <td>
+
+                            {% if debarquement.observation %}
+
+                                {{ debarquement.observation }}
+
+                            {% else %}
+
+                                <span class="text-muted">
+                                    -
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <!-- Actions -->
+                        <td class="debarquements-actions">
+
+                            <!-- Voir -->
+                            <a
+                                href="{% url 'debarquement_detail' debarquement.id %}"
+                                class="btn btn-sm btn-outline-primary"
+                                title="Voir le débarquement"
+                            >
+                                👁️ Voir
+                            </a>
+
+
+                            <!-- Modifier -->
+                            {% if user.role == 'admin' or user.role == 'chef' %}
+
+                                <a
+                                    href="{% url 'debarquement_update' debarquement.id %}"
+                                    class="btn btn-sm btn-warning"
+                                >
+                                    Modifier
+                                </a>
+
+                            {% elif user.role == 'agent' and debarquement.statut != 'valide' %}
+
+                                <a
+                                    href="{% url 'debarquement_update' debarquement.id %}"
+                                    class="btn btn-sm btn-warning"
+                                >
+                                    Modifier
+                                </a>
+
+                            {% endif %}
+
+
+                            <!-- Supprimer -->
+                            {% if user.role == 'admin' or user.role == 'chef' %}
+
+                                <a
+                                    href="{% url 'debarquement_delete' debarquement.id %}"
+                                    class="btn btn-sm btn-danger"
+                                >
+                                    Supprimer
+                                </a>
+
+                            {% endif %}
+
+
+                            <!-- Valider -->
+                            {% if user.role == 'admin' or user.role == 'chef' %}
+
+                                {% if debarquement.statut != 'valide' %}
+
+                                    <form
+                                        method="post"
+                                        action="{% url 'debarquement_validate' debarquement.id %}"
+                                        class="d-inline"
+                                    >
+
+                                        {% csrf_token %}
+
+                                        <button
+                                            type="submit"
+                                            class="btn btn-sm btn-success"
+                                        >
+                                            Valider
+                                        </button>
+
+                                    </form>
+
+                                {% endif %}
+
+                            {% endif %}
+
+                        </td>
+
+                    </tr>
+
+
+                {% empty %}
+
+                    <tr>
+
+                        <td
+                            colspan="8"
+                            class="text-center py-4"
+                        >
+
+                            <div class="text-muted">
+
+                                <div class="fs-3 mb-2">
+                                    🐟
+                                </div>
+
+                                Aucun débarquement enregistré.
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

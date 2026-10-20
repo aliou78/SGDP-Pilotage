@@ -1,0 +1,109 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Plateforme institutionnelle de gestion des débarquements des produits de la pêche au Sénégal.">
+    <title>Système de Gestion des Débarquements | Accueil</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <header class="site-header" id="accueil">
+        <nav class="nav-shell" aria-label="Navigation principale">
+            <a class="brand" href="#accueil">
+                <img src="{% static 'images/logo .png' %}" alt="Logo SGDP">
+                <span>Système de Gestion<br><b>des Débarquements</b></span>
+            </a>
+            <button class="menu-toggle" type="button" aria-label="Ouvrir le menu" aria-expanded="false">
+                <span></span><span></span><span></span>
+            </button>
+            <div class="nav-links">
+                <a class="active" href="#accueil">Accueil</a>
+                <a href="#a-propos">À propos</a>
+                <a href="#fonctionnalites">Fonctionnalités</a>
+                <a href="#contact">Contact</a>
+                <a class="nav-login" href="{% url 'login' %}">Se connecter <span>↗</span></a>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="hero-slides" aria-label="Images de pêche">
+                <div class="hero-slide is-active" style="background-image: url('{% static 'images/image du site.jpg' %}');" role="img" aria-label="Pirogues de pêche sénégalaises"></div>
+                <div class="hero-slide" style="background-image: url('{% static 'images/image site.jpg' %}');" role="img" aria-label="Pêcheurs en mer"></div>
+                <div class="hero-slide" style="background-image: url('{% static 'images/site.jpg' %}');" role="img" aria-label="Scène de débarquement de poissons"></div>
+                <div class="hero-slide" style="background-image: url('{% static 'images/images.jpg' %}');" role="img" aria-label="Produits de la mer"></div>
+                <div class="hero-slide" style="background-image: url('{% static 'images/emd.jpg' %}');" role="img" aria-label="Port et quai de pêche"></div>
+            </div>
+            <div class="hero-shade"></div>
+            <div class="hero-content page-width reveal">
+                <p class="eyebrow"><span></span> Direction de la Pêche Continentale</p>
+                <h1>Système de Gestion<br><em>des Débarquements</em></h1>
+                <p class="hero-copy">Une solution moderne pour enregistrer, suivre et analyser les débarquements des produits de la pêche.</p>
+                <div class="hero-actions">
+                    <a class="button button-primary" href="{% url 'login' %}">Se connecter <span>→</span></a>
+                    <a class="button button-ghost" href="#fonctionnalites">Découvrir la plateforme <span>↓</span></a>
+                </div>
+                <div class="hero-note"><span class="signal-dot"></span> Données centralisées · Décisions éclairées</div>
+            </div>
+            <button class="hero-control hero-prev" type="button" aria-label="Image précédente">←</button>
+            <button class="hero-control hero-next" type="button" aria-label="Image suivante">→</button>
+            <div class="hero-dots" aria-label="Choisir une image">
+                <button class="hero-dot is-active" type="button" aria-label="Afficher l'image 1" aria-current="true"></button>
+                <button class="hero-dot" type="button" aria-label="Afficher l'image 2"></button>
+                <button class="hero-dot" type="button" aria-label="Afficher l'image 3"></button>
+                <button class="hero-dot" type="button" aria-label="Afficher l'image 4"></button>
+                <button class="hero-dot" type="button" aria-label="Afficher l'image 5"></button>
+            </div>
+            <div class="hero-caption">Littoral sénégalais <span>•</span> Service public de la pêche</div>
+        </section>
+
+        <section class="intro page-width section" id="a-propos">
+            <div class="section-kicker">01 <span></span> À PROPOS</div>
+            <div class="intro-grid">
+                <div class="intro-copy reveal">
+                    <h2>Une plateforme dédiée au suivi des <em>débarquements.</em></h2>
+                    <p>Le SGDP centralise les informations relatives aux sites de débarquement, aux espèces et aux quantités débarquées. Il facilite le suivi quotidien des activités et la production de rapports fiables.</p>
+                    <a class="text-link" href="{% url 'login' %}">Accéder à la plateforme <span>↗</span></a>
+                </div>
+                <div class="intro-media reveal"><img src="{% static 'images/image site.jpg' %}" alt="Pêcheurs sénégalais sur une pirogue" loading="lazy"><span class="media-tag">Suivi de terrain</span></div>
+            </div>
+        </section>
+
+        <section class="features-section section" id="fonctionnalites">
+            <div class="page-width">
+                <div class="section-heading reveal"><div><div class="section-kicker">02 <span></span> FONCTIONNALITÉS</div><h2>Tout le suivi.<br><em>Au même endroit.</em></h2></div><p>Des outils simples et fiables pour accompagner chaque étape de la gestion des produits de la pêche.</p></div>
+                <div class="feature-grid">
+                    <article class="feature-card reveal"><div class="feature-icon">⌖</div><h3>Gestion des sites</h3><p>Répertoriez et suivez les sites de débarquement actifs.</p><span class="card-number">01</span></article>
+                    <article class="feature-card reveal"><div class="feature-icon">◈</div><h3>Gestion des espèces</h3><p>Conservez un référentiel précis des espèces enregistrées.</p><span class="card-number">02</span></article>
+                    <article class="feature-card reveal"><div class="feature-icon">≋</div><h3>Gestion des débarquements</h3><p>Enregistrez chaque opération avec rigueur et rapidité.</p><span class="card-number">03</span></article>
+                    <article class="feature-card reveal"><div class="feature-icon">▥</div><h3>Rapports et statistiques</h3><p>Transformez vos données en indicateurs lisibles.</p><span class="card-number">04</span></article>
+                    <article class="feature-card reveal"><div class="feature-icon">⌁</div><h3>Tableaux de bord</h3><p>Visualisez l'activité et ses évolutions en un coup d'œil.</p><span class="card-number">05</span></article>
+                    <article class="feature-card reveal"><div class="feature-icon">↓</div><h3>Export Excel et PDF</h3><p>Partagez vos rapports dans les formats adaptés.</p><span class="card-number">06</span></article>
+                </div>
+            </div>
+        </section>
+
+        <section class="stats-section section">
+            <div class="page-width"><div class="section-kicker light">03 <span></span> EN CHIFFRES</div><div class="stats-grid">
+                <div class="stat"><strong class="counter" data-value="{{ nombre_sites }}">0</strong><span>Sites de débarquement</span></div>
+                <div class="stat"><strong class="counter" data-value="{{ nombre_especes }}">0</strong><span>Espèces enregistrées</span></div>
+                <div class="stat"><strong class="counter" data-value="{{ nombre_debarquements }}">0</strong><span>Débarquements enregistrés</span></div>
+                <div class="stat"><strong class="counter" data-value="{{ quantite_totale|floatformat:0 }}">0</strong><span>Kg débarqués</span></div>
+            </div></div>
+        </section>
+
+        <section class="visual-break section"><div class="visual-image"></div><div class="visual-overlay"></div><div class="visual-content page-width reveal"><p class="eyebrow"><span></span> Une donnée utile est une donnée partagée</p><h2>Digitaliser la gestion<br><em>des débarquements.</em></h2></div></section>
+
+        <section class="contact section page-width" id="contact"><div class="contact-grid"><div class="reveal"><div class="section-kicker">04 <span></span> CONTACT</div><h2>Un service à votre <em>écoute.</em></h2><p>Notre équipe vous accompagne dans l'utilisation de la plateforme et le suivi de vos données.</p><a class="button button-primary" href="mailto:contact@sgdp.sn">Nous contacter <span>→</span></a></div><div class="contact-details reveal"><div><span>Adresse</span><strong>Service de Pêche du département de Bounkiling<br>Bounkiling, Sénégal</strong></div><div><span>Téléphone</span><strong>+221 33 000 00 00</strong></div><div><span>Email</span><strong>contact@sgdp.sn</strong></div><div><span>Horaires</span><strong>Lun – Ven · 08h00 – 17h00</strong></div></div></div></section>
+    </main>
+
+    <footer class="footer"><div class="page-width footer-grid"><div><a class="brand footer-brand" href="#accueil"><img src="{% static 'images/logo .png' %}" alt="Logo SGDP"><span>SGDP</span></a><p>Le numérique au service d'une gestion durable des produits de la pêche.</p></div><div><h4>Navigation</h4><a href="#a-propos">À propos</a><a href="#fonctionnalites">Fonctionnalités</a><a href="#contact">Contact</a></div><div><h4>Plateforme</h4><a href="{% url 'login' %}">Se connecter</a><a href="{% url 'dashboard' %}">Tableau de bord</a></div></div><div class="page-width footer-bottom"><span>© 2026 SGDP · Direction de la Pêche Continentale</span><span>Service public sénégalais</span></div></footer>
+    <script src="{% static 'js/script.js' %}"></script>
+</body>
+</html>

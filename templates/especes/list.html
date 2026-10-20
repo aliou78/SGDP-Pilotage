@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+
+    <div>
+        <h2>Gestion des espèces</h2>
+        <p class="text-muted">
+            Liste des espèces enregistrées
+        </p>
+    </div>
+
+    {% if user.role == 'admin' or user.role == 'chef' %}
+        <a href="{% url 'espece_create' %}" class="btn btn-primary">
+            + Ajouter une espèce
+        </a>
+    {% endif %}
+
+</div>
+
+
+<div class="card shadow-sm">
+
+    <div class="card-body">
+
+        <div class="table-responsive">
+
+            <table class="table table-hover align-middle">
+
+                <thead>
+                    <tr>
+                        <th>Nom</th>
+                        <th>Nom scientifique</th>
+                        <th>Catégorie</th>
+                        <th>Statut</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                {% for espece in especes %}
+
+                    <tr>
+
+                        <td>
+                            <strong>{{ espece.nom }}</strong>
+                        </td>
+
+                        <td>
+                            {{ espece.nom_scientifique|default:"-" }}
+                        </td>
+
+                        <td>
+                            {{ espece.categorie|default:"-" }}
+                        </td>
+
+                        <td>
+
+                            {% if espece.actif %}
+
+                                <span class="badge bg-success">
+                                    Active
+                                </span>
+
+                            {% else %}
+
+                                <span class="badge bg-secondary">
+                                    Inactive
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+                            {% if user.role == 'admin' or user.role == 'chef' %}
+                                <a href="{% url 'espece_update' espece.id %}"
+                                   class="btn btn-sm btn-warning">Modifier</a>
+                                        <form method="post"
+                                              action="{% url 'espece_toggle_active' espece.id %}"
+                                              class="d-inline">
+                                            {% csrf_token %}
+                                            <button type="submit"
+                                                    class="btn btn-sm {% if espece.actif %}btn-danger{% else %}btn-success{% endif %}">
+                                                {% if espece.actif %}Désactiver{% else %}Activer{% endif %}
+                                            </button>
+                                        </form>
+                            {% else %}
+                                <span class="text-muted">Consultation</span>
+                            {% endif %}
+                        </td>
+
+                    </tr>
+
+                {% empty %}
+
+                    <tr>
+
+                        <td colspan="5" class="text-center py-4">
+
+                            Aucune espèce enregistrée.
+
+                        </td>
+
+                    </tr>
+
+                {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

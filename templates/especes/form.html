@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="row justify-content-center">
+
+    <div class="col-md-8 col-lg-7">
+
+        <div class="card shadow-sm border-0">
+
+            <div class="card-header bg-success text-white">
+                <h4 class="mb-0">
+                    🐟 Gestion d'une espèce
+                </h4>
+            </div>
+
+            <div class="card-body p-4">
+
+                <p class="text-muted mb-4">
+                    Renseignez les informations de l'espèce.
+                    Le statut actif/inactif est géré depuis la liste des espèces.
+                </p>
+
+                <form method="post">
+
+                    {% csrf_token %}
+
+                    <div class="mb-3">
+                        <label for="{{ form.nom.id_for_label }}"
+                               class="form-label fw-semibold">
+                            Nom de l'espèce
+                        </label>
+
+                        {{ form.nom }}
+
+                        {% if form.nom.errors %}
+                            <div class="text-danger small mt-1">
+                                {{ form.nom.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="{{ form.nom_scientifique.id_for_label }}"
+                               class="form-label fw-semibold">
+                            Nom scientifique
+                        </label>
+
+                        {{ form.nom_scientifique }}
+
+                        {% if form.nom_scientifique.errors %}
+                            <div class="text-danger small mt-1">
+                                {{ form.nom_scientifique.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="{{ form.categorie.id_for_label }}"
+                               class="form-label fw-semibold">
+                            Catégorie
+                        </label>
+
+                        {{ form.categorie }}
+
+                        {% if form.categorie.errors %}
+                            <div class="text-danger small mt-1">
+                                {{ form.categorie.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="d-flex gap-2">
+
+                        <button type="submit"
+                                class="btn btn-success">
+                            Enregistrer
+                        </button>
+
+                        <a href="{% url 'espece_list' %}"
+                           class="btn btn-secondary">
+                            Annuler
+                        </a>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

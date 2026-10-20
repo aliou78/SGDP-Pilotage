@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="row justify-content-center">
+
+    <div class="col-md-6">
+
+        <div class="card shadow-sm">
+
+            <div class="card-body text-center">
+
+                <h3 class="mb-3">
+                    Archiver le débarquement
+                </h3>
+
+                <p>
+                    Voulez-vous archiver cet enregistrement ?
+                    Il restera consultable et pourra être restauré.
+                </p>
+
+                <div class="alert alert-light">
+
+                    <strong>
+                        Date :
+                    </strong>
+                    {{ debarquement.date|date:"d/m/Y" }}
+
+                    <br>
+
+                    <strong>
+                        Site :
+                    </strong>
+                    {{ debarquement.site.nom }}
+
+                    <br>
+
+                    <strong>
+                        Espèce :
+                    </strong>
+                    {{ debarquement.espece.nom }}
+
+                    <br>
+
+                    <strong>
+                        Quantité :
+                    </strong>
+                    {{ debarquement.quantite }} kg
+
+                </div>
+
+
+                <form method="post">
+
+                    {% csrf_token %}
+
+                    <button type="submit"
+                            class="btn btn-warning">
+                        Archiver
+                    </button>
+
+                    <a href="{% url 'debarquement_list' %}"
+                       class="btn btn-secondary">
+                        Annuler
+                    </a>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

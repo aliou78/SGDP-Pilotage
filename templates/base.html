@@ -1,0 +1,370 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>{% block title %}SGDP{% endblock %}</title>
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+    <style>
+        :root {
+            --sgdp-green: #087f5b;
+            --sgdp-green-dark: #075b45;
+            --sgdp-ink: #183447;
+            --sgdp-sand: #f4f7f8;
+            --sgdp-gold: #e7b94f;
+        }
+
+        body {
+            background: var(--sgdp-sand) !important;
+            color: var(--sgdp-ink);
+        }
+
+        .sgdp-header {
+            background: var(--sgdp-ink);
+            border-bottom: 3px solid var(--sgdp-gold);
+            position: sticky;
+            top: 0;
+            z-index: 1030;
+        }
+
+        .sgdp-brand {
+            align-items: center;
+            display: flex;
+            gap: .8rem;
+            letter-spacing: .06em;
+            margin-right: 1.5rem;
+        }
+
+        .sgdp-logo {
+            background: #fff;
+            border: 2px solid rgba(255, 255, 255, .7);
+            border-radius: 12px;
+            height: 48px;
+            object-fit: cover;
+            padding: 3px;
+            width: 48px;
+        }
+
+        .sgdp-brand small {
+            display: block;
+            color: rgba(255, 255, 255, .68);
+            font-size: .62rem;
+            font-weight: 400;
+            letter-spacing: .1em;
+            text-transform: uppercase;
+        }
+
+        .sgdp-nav .nav-link {
+            border-radius: .4rem;
+            color: rgba(255, 255, 255, .78);
+            font-size: .92rem;
+            margin: 0 .12rem;
+            padding: .65rem .7rem;
+            transition: background-color .2s ease, color .2s ease;
+        }
+
+        .sgdp-nav .nav-link:hover,
+        .sgdp-nav .nav-link.active {
+            color: #fff;
+            background: rgba(255, 255, 255, .12);
+        }
+
+        .sgdp-user {
+            border-left: 1px solid rgba(255, 255, 255, .2);
+            color: #fff;
+            padding-left: 1.1rem;
+        }
+
+        .sgdp-user .sgdp-role {
+            color: rgba(255, 255, 255, .65);
+            font-size: .78rem;
+        }
+
+        .sgdp-header .navbar-toggler {
+            border-color: rgba(255, 255, 255, .35);
+        }
+
+        .sgdp-footer {
+            background: #122b3d;
+            border-top: 3px solid var(--sgdp-gold);
+        }
+
+        .sgdp-footer h5,
+        .sgdp-footer h6 {
+            color: #fff;
+        }
+
+        .sgdp-footer h5 {
+            letter-spacing: .06em;
+        }
+
+        .sgdp-footer h6 {
+            font-size: .76rem;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+        }
+
+        .sgdp-footer p {
+            color: rgba(255, 255, 255, .68);
+            line-height: 1.7;
+        }
+
+        .sgdp-footer-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .sgdp-footer-list li {
+            margin-bottom: .6rem;
+        }
+
+        .sgdp-footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, .15);
+            color: rgba(255, 255, 255, .55);
+            font-size: .8rem;
+            margin-top: 2rem;
+            padding-top: 1.25rem;
+        }
+
+        .sgdp-footer a {
+            color: rgba(255, 255, 255, .75);
+            text-decoration: none;
+            transition: color .2s ease;
+        }
+
+        .sgdp-footer a:hover {
+            color: #fff;
+        }
+
+        .sgdp-footer-logo {
+            background: #fff;
+            border: 2px solid rgba(255, 255, 255, .7);
+            border-radius: 12px;
+            height: 50px;
+            object-fit: cover;
+            padding: 3px;
+            width: 50px;
+        }
+
+        @media (max-width: 991.98px) {
+            .sgdp-user {
+                border-left: 0;
+                margin-top: .5rem;
+                padding: .75rem 0 0;
+            }
+
+            .sgdp-nav .nav-link {
+                margin: .1rem 0;
+            }
+
+            .sgdp-brand {
+                margin-right: 0;
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-light">
+
+<!-- ================= HEADER ================= -->
+
+<nav class="navbar navbar-expand-lg navbar-dark sgdp-header shadow-sm">
+
+    <div class="container-fluid">
+
+        <a class="navbar-brand sgdp-brand fw-bold"
+           href="{% url 'dashboard' %}">
+            <img class="sgdp-logo"
+                 src="{% static 'images/logo .png' %}"
+                 alt="Logo de la Direction de la Pêche Continentale">
+            <span>
+                SGDP
+                <small>Gestion des produits de la pêche</small>
+            </span>
+        </a>
+
+        <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#menuPrincipal">
+
+            <span class="navbar-toggler-icon"></span>
+
+        </button>
+
+        <div class="collapse navbar-collapse"
+             id="menuPrincipal">
+
+            <ul class="navbar-nav sgdp-nav me-auto mb-2 mb-lg-0">
+
+                <li class="nav-item">
+                    <a class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}"
+                       href="{% url 'dashboard' %}">
+                        Tableau de bord
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link {% if request.path|slice:':7' == '/sites/' %}active{% endif %}"
+                       href="{% url 'site_list' %}">
+                        Sites
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link {% if request.path|slice:':9' == '/especes/' %}active{% endif %}"
+                       href="{% url 'espece_list' %}">
+                        Espèces
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link {% if request.path|slice:':14' == '/debarquements/' %}active{% endif %}"
+                       href="{% url 'debarquement_list' %}">
+                        Débarquements
+                    </a>
+                </li>
+
+                {% if user.role == 'admin' or user.role == 'chef' or user.role == 'consultation' %}
+                <li class="nav-item">
+                    <a class="nav-link {% if request.path|slice:':10' == '/rapports/' %}active{% endif %}"
+                       href="{% url 'rapport_list' %}">
+                        Rapports
+                    </a>
+                </li>
+                {% endif %}
+
+                {% if user.role == 'admin' or user.role == 'chef' %}
+<li class="nav-item">
+    <a class="nav-link {% if request.path == '/debarquements/archives/' %}active{% endif %}"
+       href="{% url 'debarquement_archive_list' %}">
+        Archives
+    </a>
+</li>
+{% endif %}
+
+                {% if user.role == 'admin' %}
+                <li class="nav-item">
+                    <a class="nav-link {% if request.path|slice:':14' == '/accounts/utilis' %}active{% endif %}"
+                       href="{% url 'user_list' %}">
+                        Utilisateurs
+                    </a>
+                </li>
+                {% endif %}
+
+            </ul>
+
+            {% if user.is_authenticated %}
+
+                <div class="sgdp-user d-flex align-items-center gap-3">
+                    <span>
+                        <strong>{{ user.username }}</strong>
+                        <small class="d-block sgdp-role">{{ user.get_role_display }}</small>
+                    </span>
+                    <form method="post" action="{% url 'logout' %}" class="m-0">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-sm btn-outline-light">Déconnexion</button>
+                    </form>
+                </div>
+
+            {% else %}
+                <a class="btn btn-sm btn-outline-light fw-semibold" href="{% url 'login' %}">
+                    Se connecter
+                </a>
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</nav>
+
+
+<!-- ================= CONTENU ================= -->
+
+<main class="container mt-4 mb-5">
+
+    {% block content %}
+    {% endblock %}
+
+</main>
+
+
+<!-- ================= FOOTER ================= -->
+
+<footer class="sgdp-footer text-white mt-5">
+
+    <div class="container py-5">
+
+        <div class="row">
+            <div class="col-lg-4 col-md-6 mb-4 mb-lg-0">
+                <div class="d-flex align-items-center gap-3 mb-3">
+                    <img class="sgdp-footer-logo"
+                         src="{% static 'images/logo .png' %}"
+                         alt="Logo de la Direction de la Pêche Continentale">
+                    <h5 class="mb-0">SGDP</h5>
+                </div>
+                <p class="mb-0">
+                    Système de Gestion des Débarquements de Produits de la pêche.
+                    Une plateforme de suivi et d'analyse au service de la
+                    Direction de la Pêche Continentale.
+                </p>
+            </div>
+
+            <div class="col-lg-2 col-md-6 mb-4 mb-lg-0">
+                <h6 class="mb-3">Navigation</h6>
+                <ul class="sgdp-footer-list">
+                    <li><a href="{% url 'dashboard' %}">Tableau de bord</a></li>
+                    <li><a href="{% url 'site_list' %}">Sites</a></li>
+                    <li><a href="{% url 'espece_list' %}">Espèces</a></li>
+                </ul>
+            </div>
+
+            <div class="col-lg-3 col-md-6 mb-4 mb-lg-0">
+                <h6 class="mb-3">Gestion</h6>
+                <ul class="sgdp-footer-list">
+                    <li><a href="{% url 'debarquement_list' %}">Débarquements</a></li>
+                    {% if user.role == 'admin' or user.role == 'chef' or user.role == 'consultation' %}
+                        <li><a href="{% url 'rapport_list' %}">Rapports et filtres</a></li>
+                        <li><a href="{% url 'rapport_excel' %}">Export Excel</a></li>
+                    {% endif %}
+                    {% if user.role == 'admin' or user.role == 'chef' %}
+                        <li><a href="{% url 'rapport_pdf' %}">Export PDF</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+
+            <div class="col-lg-3 col-md-6">
+                <h6 class="mb-3">Institution</h6>
+                <p class="mb-0">Direction de la Pêche Continentale</p>
+            </div>
+        </div>
+
+        <div class="sgdp-footer-bottom d-flex flex-column flex-md-row justify-content-between gap-2">
+            <span>© {% now "Y" %} DPC – Direction de la Pêche Continentale. Tous droits réservés.</span>
+            <span>Système de Gestion des Débarquements de Produits de la pêche</span>
+        </div>
+
+    </div>
+
+</footer>
+
+
+<script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+</script>
+
+</body>
+</html>

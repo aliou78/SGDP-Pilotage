@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="row justify-content-center">
+
+    <div class="col-md-6">
+
+        <div class="card shadow-sm">
+
+            <div class="card-body text-center">
+
+                <h3 class="mb-3">
+                    Supprimer l'espèce
+                </h3>
+
+                <p>
+                    Voulez-vous vraiment supprimer :
+                    <strong>{{ espece.nom }}</strong> ?
+                </p>
+
+                <form method="post">
+
+                    {% csrf_token %}
+
+                    <button type="submit"
+                            class="btn btn-danger">
+
+                        Oui, supprimer
+
+                    </button>
+
+                    <a href="{% url 'espece_list' %}"
+                       class="btn btn-secondary">
+
+                        Annuler
+
+                    </a>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
