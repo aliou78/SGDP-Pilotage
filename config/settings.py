@@ -15,16 +15,18 @@ import os
 
 import dj_database_url
 from django.core.exceptions import ImproperlyConfigured
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+load_dotenv(BASE_DIR / '.env')
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # Development defaults are overridden by Render environment variables.
-DEBUG = os.environ.get('DEBUG', 'true').lower() in ('true', '1', 'yes')
+DEBUG = os.environ.get('DEBUG', 'false').lower() in ('true', '1', 'yes')
 SECRET_KEY = os.environ.get('SECRET_KEY')
 if not SECRET_KEY:
     if not DEBUG:
@@ -96,23 +98,16 @@ TEMPLATES = [
 WSGI_APPLICATION = 'config.wsgi.application'
 
 
-# PostgreSQL is the default database. SQLite remains available only when
-# explicitly selected for local development or isolated tests.
+# PostgreSQL is the default in every environment. SQLite is opt-in for local
+# tests or development by setting DB_ENGINE=sqlite.
 DATABASE_ENGINE = os.environ.get(
     'DB_ENGINE',
     'django.db.backends.postgresql',
 )
+DATABASE_ENGINE_EXPLICIT = 'DB_ENGINE' in os.environ
 
 DATABASE_URL = os.environ.get('DATABASE_URL')
-if DATABASE_URL:
-    DATABASES = {
-        'default': dj_database_url.parse(
-            DATABASE_URL,
-            conn_max_age=int(os.environ.get('DB_CONN_MAX_AGE', '60')),
-            conn_health_checks=True,
-        )
-    }
-elif DATABASE_ENGINE in ('sqlite', 'django.db.backends.sqlite3'):
+if DATABASE_ENGINE in ('sqlite', 'django.db.backends.sqlite3'):
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
@@ -122,13 +117,32 @@ elif DATABASE_ENGINE in ('sqlite', 'django.db.backends.sqlite3'):
             ),
         }
     }
+elif DATABASE_URL and not DATABASE_ENGINE_EXPLICIT:
+    DATABASES = {
+        'default': dj_database_url.parse(
+            DATABASE_URL,
+            conn_max_age=int(os.environ.get('DB_CONN_MAX_AGE', '60')),
+            conn_health_checks=True,
+        )
+    }
 else:
+    database_password = os.environ.get('DB_PASSWORD', '')
+    if (
+        DATABASE_ENGINE.startswith('django.db.backends.postgresql')
+        and not database_password
+    ):
+        raise ImproperlyConfigured(
+            'PostgreSQL DB_PASSWORD is missing. Run '
+            '"python setup_local_db.py" or start "python manage.py runserver" '
+            'in an interactive terminal to configure the local .env file.'
+        )
+
     DATABASES = {
         'default': {
             'ENGINE': DATABASE_ENGINE,
             'NAME': os.environ.get('DB_NAME', 'sgdp'),
             'USER': os.environ.get('DB_USER', 'sgdp'),
-            'PASSWORD': os.environ.get('DB_PASSWORD', ''),
+            'PASSWORD': database_password,
             'HOST': os.environ.get('DB_HOST', '127.0.0.1'),
             'PORT': os.environ.get('DB_PORT', '5432'),
             'CONN_MAX_AGE': int(os.environ.get('DB_CONN_MAX_AGE', '60')),

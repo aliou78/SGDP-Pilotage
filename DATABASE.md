@@ -1,8 +1,9 @@
-# Configuration PostgreSQL et déploiement sur Render
+# Configuration des bases de données et déploiement sur Render
 
-PostgreSQL est le moteur utilisé par défaut. La connexion est configurée par
-variables d’environnement ; aucun mot de passe de base de données n’est stocké
-dans le dépôt.
+PostgreSQL est le moteur par défaut, en local comme en production. La connexion
+est configurée par variables d’environnement et aucun mot de passe de base de
+données n’est stocké dans le dépôt. SQLite reste disponible en la sélectionnant
+explicitement avec `DB_ENGINE=sqlite`, notamment pour les tests isolés.
 
 ## Déploiement Render
 
@@ -32,8 +33,8 @@ définitivement servis en HTTPS.
 
 | Variable | Valeur par défaut | Description |
 | --- | --- | --- |
-| `DATABASE_URL` | vide | URL fournie par l’hébergeur ; prioritaire lorsqu’elle est définie |
-| `DB_ENGINE` | `django.db.backends.postgresql` | Backend Django ; choisir `sqlite` seulement pour un usage local explicite |
+| `DATABASE_URL` | vide | URL fournie par l’hébergeur ; utilisée avec PostgreSQL |
+| `DB_ENGINE` | `django.db.backends.postgresql` | Backend Django ; choisir `sqlite` explicitement pour utiliser SQLite, ce qui est prioritaire sur `DATABASE_URL` |
 | `DB_NAME` | `sgdp` | Nom de la base |
 | `DB_USER` | `sgdp` | Utilisateur PostgreSQL |
 | `DB_PASSWORD` | vide | Mot de passe PostgreSQL ; à définir dans l’environnement du serveur |
@@ -52,26 +53,39 @@ Installer les dépendances du projet :
 .\venv\Scripts\python.exe -m pip install -r requirements.txt
 ```
 
-Créer un rôle et une base dédiés dans PostgreSQL (choisir le mot de passe au
-moment du déploiement, sans le placer dans les commandes enregistrées ou dans
-le dépôt) :
+Au premier lancement de `python manage.py runserver` dans un terminal
+interactif, Django demande le mot de passe PostgreSQL à l’écran de saisie
+masquée, puis l’enregistre dans `.env` sans l’afficher. Pour créer cette
+configuration séparément, exécuter `python setup_local_db.py`.
+`settings.py` charge automatiquement `.env` au démarrage ; ce fichier est
+ignoré par Git et ne doit jamais être publié. Si `DATABASE_URL` est définie
+dans l’environnement PowerShell, la supprimer pour utiliser la configuration
+PostgreSQL locale :
+
+```powershell
+Remove-Item Env:DATABASE_URL -ErrorAction SilentlyContinue
+python manage.py migrate
+python manage.py runserver
+```
+
+Créer un rôle et une base dédiés dans PostgreSQL (choisir un mot de passe et le
+configurer dans l’environnement, sans le placer dans le dépôt) :
 
 ```sql
 CREATE ROLE sgdp LOGIN;
 CREATE DATABASE sgdp OWNER sgdp;
 ```
 
-Définir `DB_PASSWORD` dans l’environnement du processus Django, ainsi que les
-autres variables si la base n’est pas sur `127.0.0.1:5432`, puis préparer le
-schéma et contrôler l’application :
+Démarrer le service PostgreSQL, puis préparer le schéma et contrôler
+l’application :
 
 ```powershell
 .\venv\Scripts\python.exe manage.py migrate
 .\venv\Scripts\python.exe manage.py check
+.\venv\Scripts\python.exe manage.py runserver
 ```
 
-Pour sélectionner SQLite explicitement lors d’un développement local ou de
-tests isolés :
+Pour forcer SQLite lors d’un développement local ou de tests isolés :
 
 ```powershell
 $env:DB_ENGINE = "sqlite"
@@ -82,21 +96,22 @@ Remove-Item Env:DB_ENGINE
 ## Reprise des données SQLite existantes
 
 La configuration PostgreSQL ne supprime ni ne modifie `db.sqlite3`. Sauvegarder
-ce fichier avant toute opération et ne pas exécuter ces étapes sur la seule
-copie des données. Exporter le contenu SQLite vers un fichier fixture protégé,
-puis créer les tables PostgreSQL et charger cette fixture :
+ce fichier avant toute opération et ne lancer l’import qu’une seule fois dans
+une base PostgreSQL vide. Le fixture contient les utilisateurs et leurs
+empreintes de mots de passe : le conserver dans un emplacement privé et ne pas
+le publier.
 
 ```powershell
 $env:DB_ENGINE = "sqlite"
+Remove-Item Env:DATABASE_URL -ErrorAction SilentlyContinue
 .\venv\Scripts\python.exe manage.py dumpdata --natural-foreign --natural-primary --exclude contenttypes --exclude auth.permission --indent 2 --output sgdp-data.json
 
 $env:DB_ENGINE = "django.db.backends.postgresql"
-# Définir DB_NAME, DB_USER, DB_PASSWORD, DB_HOST et DB_PORT avant ces étapes.
+# Créer au préalable le rôle et la base PostgreSQL, puis définir DB_PASSWORD.
 .\venv\Scripts\python.exe manage.py migrate
 .\venv\Scripts\python.exe manage.py loaddata sgdp-data.json
 ```
 
-Le fixture contient des données utilisateurs et des empreintes de mots de
-passe : le conserver dans un emplacement privé, ne pas le publier et le
-supprimer de manière sûre après vérification de l’import. Vérifier les
-enregistrements et les comptes dans l’application avant de basculer le service.
+Vérifier les enregistrements et les comptes dans l’application avant de supprimer
+le fixture de manière sûre. Ne pas supprimer la base SQLite avant d’avoir
+confirmé l’import.
